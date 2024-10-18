@@ -84,10 +84,10 @@ $(function () {
 
       //snake to camel
       const snakeToCamel = (str) => str.replace(
-        /([-_][a-zA-Z])/g,
-        (group) => group.toUpperCase()
-          .replace('-', '')
-          .replace('_', '')
+          /([-_][a-zA-Z])/g,
+          (group) => group.toUpperCase()
+              .replace('-', '')
+              .replace('_', '')
       );
 
       //去除重复元素
@@ -459,6 +459,9 @@ $(function () {
     checkBoxBinding('faultToleranceCheckBox', false);
     checkBoxBinding('forceStringCheckBox', false);
     checkBoxBinding('origJsonCheckBox', false);
+    // 默认允许为空
+    $('#nullSafeCheckBox').prop('checked', true);
+
 
     $('#usingJsonKeyCheckBox').on('change', function () {
       $('#jsonKeyPrivateCheckBox').prop('disabled', !(this.checked));
@@ -476,7 +479,45 @@ $(function () {
     }
 
     $('#copyFileBtn').click(function () {
-      copyToClipboard(resultDartCode);
+      let fileName = $('#fileNameTextField').val();
+      if(fileName === undefined || fileName === ''){
+        alert('Please enter the class name');
+      }else{
+        copyToClipboard(resultDartCode);
+      }
+    });
+
+
+    function downloadFile(filename, text) {
+      // 创建一个Blob实例，类型为纯文本
+      var blob = new Blob([text], { type: 'text/plain' });
+
+      // 创建一个指向Blob的URL
+      var url = URL.createObjectURL(blob);
+
+      // 创建一个a标签
+      var a = document.createElement('a');
+
+      // 设置a标签属性
+      a.href = url;
+      a.download = filename;
+
+      // 模拟a标签点击，触发下载
+      document.body.appendChild(a);
+      a.click();
+
+      // 清理临时DOM和对象URL
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    $('#downloadFileBtn').click(function () {
+      let fileName = $('#fileNameTextField').val();
+      if(fileName === undefined || fileName === ''){
+        alert('Please enter the class name');
+      }else{
+        downloadFile(fileName, resultDartCode);
+      }
     });
 
   })();
